@@ -43,46 +43,21 @@ uint8_t Display::updateTouch(uint16_t *x, uint16_t *y, uint16_t threshold) {
   #ifdef HAS_ILI9341
     if (!this->headless_mode)
       #ifndef HAS_CYD_TOUCH
-        return this->tft.getTouch(x, y, threshold);
-      #else
-        if (this->touchscreen.tirqTouched() && this->touchscreen.touched()) {
-          TS_Point p = this->touchscreen.getPoint();
-
-          //*x = map(p.x, 200, 3700, 1, TFT_WIDTH);
-          //*y = map(p.y, 240, 3800, 1, TFT_HEIGHT);
-
-          uint8_t rot = this->tft.getRotation();
-
-          //#ifdef HAS_CYD_PORTRAIT
-          //  rot = 0;
-          //#endif
-
-          switch (rot) {
-            case 0: // Standard Protrait
-              *x = map(p.x, 200, 3700, 1, TFT_WIDTH);
-              *y = map(p.y, 240, 3800, 1, TFT_HEIGHT);
-              break;
-            case 1:
-              *x = map(p.y, 143, 3715, 0, TFT_HEIGHT);     // Horizontal (Y axis in touch, X on screen)
-              *y = map(p.x, 3786, 216, 0, TFT_WIDTH);    // Vertical (X axis in touch, Y on screen)
-              break;
-            case 2:
-              *x = map(p.x, 3700, 200, 1, TFT_WIDTH);
-              *y = map(p.y, 3800, 240, 1, TFT_HEIGHT);
-              break;
-            case 3:
-              *x = map(p.y, 3800, 240, 1, TFT_WIDTH);
-              *y = map(p.x, 200, 3700, 1, TFT_HEIGHT);
-              break;
-          }
-          return 1;
-        }
-        else
-          return 0;
-      #endif
-    else
-      return !this->headless_mode;
-  #endif
+  uint8_t touched = this->tft.getTouch(x, y, threshold);
+  if (touched) {
+    // INTERCAMBIA X/Y si están cruzados
+    uint16_t temp = *x;
+    *x = *y;
+    *y = temp;
+    
+    // Si además necesitas invertir un eje, descomenta:
+    // *x = TFT_WIDTH - *x;
+    // *y = TFT_HEIGHT - *y;
+  }
+  return touched;
+#else
+  // CYD Touch...
+#endif
 
   return 0;
 }
