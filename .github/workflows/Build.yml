@@ -1,0 +1,47 @@
+name: Build ESP32 Marauder CYD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-cyd:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Configure Arduino CLI
+        run: |
+          arduino-cli config init
+          arduino-cli config set board_manager.additional_urls https://github.com/espressif/arduino-esp32/releases/download/2.0.11/package_esp32_dev_index.json
+
+      - name: Update index
+        run: arduino-cli core update-index
+
+      - name: Install ESP32 platform
+        run: arduino-cli core install esp32:esp32@2.0.11
+
+      - name: Install libraries
+        run: |
+          mkdir -p /home/runner/Arduino/libraries
+          mv --no-clobber *Custom* /home/runner/Arduino/libraries/ || true
+
+      - name: Compile Marauder for CYD
+        run: |
+          arduino-cli compile \
+            --fqbn esp32:esp32:esp32 \
+            --build-property compiler.cpp.extra_flags="-DMARAUDER_CYD" \
+            --warnings none \
+            ./esp32_marauder
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: esp32-marauder-cyd
+          path: esp32_marauder/build/esp32.ino.bin
