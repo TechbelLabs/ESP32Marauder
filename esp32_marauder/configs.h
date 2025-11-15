@@ -15,7 +15,7 @@
   //#define MARAUDER_V6_1
   //#define MARAUDER_V7
   //#define MARAUDER_V7_1
-  //#define MARAUDER_KIT
+  #define MARAUDER_KIT
   //#define GENERIC_ESP32
   //#define MARAUDER_FLIPPER
   //#define MARAUDER_MULTIBOARD_S3
@@ -304,7 +304,7 @@
   #ifdef MARAUDER_KIT
     #define HAS_TOUCH
     //#define FLIPPER_ZERO_HAT
-    #define HAS_BATTERY
+    //#define HAS_BATTERY
     #define HAS_BT
     //#define HAS_BUTTONS
     #define HAS_NEOPIXEL_LED
@@ -313,8 +313,8 @@
     #define HAS_FULL_SCREEN
     #define HAS_SD
     #define USE_SD
-    #define HAS_TEMP_SENSOR
-    #define HAS_GPS
+    //#define HAS_TEMP_SENSOR
+    //#define HAS_GPS
   #endif
 
   #ifdef GENERIC_ESP32
@@ -1592,7 +1592,7 @@
 
       #define GRAPH_VERT_LIM TFT_HEIGHT/2 - 1
 
-      #define TFT_DIY
+      #define TFT_SHIELD
       #define KIT
 
       #define EXT_BUTTON_WIDTH 20
